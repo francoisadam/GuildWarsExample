@@ -1,5 +1,8 @@
 package com.example.francois.guildwarsexample.activities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 
 import com.example.francois.guildwarsexample.R;
 import com.example.francois.guildwarsexample.adapters.CategoryAdapter;
+import com.example.francois.guildwarsexample.database.DBManager;
 import com.example.francois.guildwarsexample.pojo.Category;
 import com.example.francois.guildwarsexample.pojo.Group;
 import com.example.francois.guildwarsexample.retrofit.RestManager;
@@ -25,6 +29,7 @@ public class CategoryListFragment extends Fragment {
     private List<Category> categoryList;
     private Group selectedGroup;
     private RestManager restManager = RestManager.getInstance();
+    private DBManager dbManager = DBManager.getInstance();
     @BindView(R.id.category_list) ListView categoryListView;
 
     @Override
@@ -37,14 +42,26 @@ public class CategoryListFragment extends Fragment {
     }
 
     public void collectData() {
-        restManager.loadCategories(selectedGroup.getCategories())
-                .subscribe((List<Category> categories) -> {
-                            categoryList.clear();
-                            categoryList.addAll(categories);
-                            categoryAdapter.notifyDataSetChanged();
-                        },
-                        (error) -> {},
-                        () -> {});
+        //TODO Dans le cas en ligne, envoyer les données reçu à la base de donnée sans pour autant ralentir le reste
+
+        ConnectivityManager cm = (ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
+            restManager.loadCategories(selectedGroup.getCategories())
+                    .subscribe((List<Category> categories) -> {
+                                categoryList.clear();
+                                categoryList.addAll(categories);
+                                categoryAdapter.notifyDataSetChanged();
+                            },
+                            (error) -> {},
+                            () -> {});
+        }
+        else {
+            categoryList.clear();
+            categoryList.addAll(dbManager.loadCategories(selectedGroup.getCategories()));
+            categoryAdapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override

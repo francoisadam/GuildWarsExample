@@ -1,5 +1,8 @@
 package com.example.francois.guildwarsexample.activities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 
 import com.example.francois.guildwarsexample.R;
 import com.example.francois.guildwarsexample.adapters.AchievementAdapter;
+import com.example.francois.guildwarsexample.database.DBManager;
 import com.example.francois.guildwarsexample.pojo.Achievement;
 import com.example.francois.guildwarsexample.pojo.Category;
 import com.example.francois.guildwarsexample.retrofit.RestManager;
@@ -23,6 +27,7 @@ import butterknife.ButterKnife;
 public class AchievementListFragment extends Fragment {
     private List<Achievement> achievements = new ArrayList<>();
     private RestManager restManager = RestManager.getInstance();
+    private DBManager dbManager = DBManager.getInstance();
     private Category selectedCategory;
     private AchievementAdapter adapter;
     @BindView(R.id.achievement_list) ListView achievement_List;
@@ -36,15 +41,26 @@ public class AchievementListFragment extends Fragment {
     }
 
     public void collectData(){
-        restManager.loadAchievements(selectedCategory.getAchievements()).subscribe(
-                (List<Achievement> ach) -> {
-                    achievements.clear();
-                    achievements.addAll(ach);
-                    adapter.notifyDataSetChanged();
-                },
-                (Throwable e) -> {},
-                () -> {}
-        );
+        //TODO Dans le cas en ligne, envoyer les données reçu à la base de donnée sans pour autant ralentir le reste
+
+        ConnectivityManager cm = (ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
+            restManager.loadAchievements(selectedCategory.getAchievements()).subscribe(
+                    (List<Achievement> ach) -> {
+                        achievements.clear();
+                        achievements.addAll(ach);
+                        adapter.notifyDataSetChanged();
+                    },
+                    (Throwable e) -> {},
+                    () -> {}
+            );
+        }
+        else {
+            achievements.clear();
+            achievements.addAll(dbManager.loadAchievements(selectedCategory.getAchievements()));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override

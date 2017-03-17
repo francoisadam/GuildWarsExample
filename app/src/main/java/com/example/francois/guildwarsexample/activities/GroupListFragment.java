@@ -1,5 +1,8 @@
 package com.example.francois.guildwarsexample.activities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 
 import com.example.francois.guildwarsexample.R;
 import com.example.francois.guildwarsexample.adapters.GroupAdapter;
+import com.example.francois.guildwarsexample.database.DBManager;
 import com.example.francois.guildwarsexample.pojo.Group;
 import com.example.francois.guildwarsexample.retrofit.RestManager;
 
@@ -22,6 +26,7 @@ import butterknife.ButterKnife;
 public class GroupListFragment extends Fragment {
     private List<Group> groups = new ArrayList<>();
     private RestManager restManager = RestManager.getInstance();
+    private DBManager dbManager = DBManager.getInstance();
     private GroupAdapter adapter;
     @BindView(R.id.group_list) ListView group_List;
 
@@ -33,15 +38,28 @@ public class GroupListFragment extends Fragment {
     }
 
     public void collectData(){
-        restManager.loadGroups().subscribe(
-                (List<Group> groupList) -> {
-                    groups.clear();
-                    groups.addAll(groupList);
-                    adapter.notifyDataSetChanged();
-                },
-                (Throwable e) -> {},
-                () -> {}
-        );
+        //TODO Dans le cas en ligne, envoyer les données reçu à la base de donnée sans pour autant ralentir le reste
+
+        ConnectivityManager cm = (ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
+            restManager.loadGroups().subscribe(
+                    (List<Group> groupList) -> {
+                        groups.clear();
+                        groups.addAll(groupList);
+                        adapter.notifyDataSetChanged();
+                    },
+                    (Throwable e) -> {},
+                    () -> {}
+            );
+        }
+        else {
+            groups.clear();
+            groups.addAll(dbManager.loadGroups());
+            adapter.notifyDataSetChanged();
+        }
+
+
     }
 
     @Override

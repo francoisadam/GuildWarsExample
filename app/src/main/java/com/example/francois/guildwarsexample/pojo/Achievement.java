@@ -140,3 +140,5 @@ public class Achievement implements Parcelable {
         }
     };
 }
+
+//TODO prendre en compte l'id

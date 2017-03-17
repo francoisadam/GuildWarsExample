@@ -103,5 +103,6 @@ public class Group implements Parcelable{
             return new Group[size];
         }
     };
-
 }
+
+//TODO prendre en compte l'id
