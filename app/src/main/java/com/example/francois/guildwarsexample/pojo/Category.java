@@ -117,5 +117,3 @@ public class Category implements Parcelable {
         }
     };
 }
-
-//TODO prendre en compte l'id

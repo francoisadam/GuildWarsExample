@@ -42,8 +42,6 @@ public class CategoryListFragment extends Fragment {
     }
 
     public void collectData() {
-        //TODO Dans le cas en ligne, envoyer les données reçu à la base de donnée sans pour autant ralentir le reste
-
         ConnectivityManager cm = (ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
@@ -51,6 +49,7 @@ public class CategoryListFragment extends Fragment {
                     .subscribe((List<Category> categories) -> {
                                 categoryList.clear();
                                 categoryList.addAll(categories);
+                                dbManager.addCategories(categories);
                                 categoryAdapter.notifyDataSetChanged();
                             },
                             (error) -> {},

@@ -29,9 +29,9 @@ public class DBManager {
 
     public List<Achievement> loadAchievements(List<Integer> ids) {return null;}
 
-    public void addGroup(Group group) {}
+    public void addGroups(List<Group> groups) {}
 
-    public void addCategory(Category category) {}
+    public void addCategories(List<Category> categories) {}
 
-    public void addAchievement(Achievement achievement) {}
+    public void addAchievements(List<Achievement> achievements) {}
 }

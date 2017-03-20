@@ -41,8 +41,6 @@ public class AchievementListFragment extends Fragment {
     }
 
     public void collectData(){
-        //TODO Dans le cas en ligne, envoyer les données reçu à la base de donnée sans pour autant ralentir le reste
-
         ConnectivityManager cm = (ConnectivityManager)this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
@@ -50,6 +48,7 @@ public class AchievementListFragment extends Fragment {
                     (List<Achievement> ach) -> {
                         achievements.clear();
                         achievements.addAll(ach);
+                        dbManager.addAchievements(ach);
                         adapter.notifyDataSetChanged();
                     },
                     (Throwable e) -> {},
