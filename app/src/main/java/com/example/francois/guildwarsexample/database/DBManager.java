@@ -1,5 +1,7 @@
 package com.example.francois.guildwarsexample.database;
 
+import android.content.Context;
+
 import com.example.francois.guildwarsexample.pojo.Achievement;
 import com.example.francois.guildwarsexample.pojo.Category;
 import com.example.francois.guildwarsexample.pojo.Group;
@@ -23,7 +25,8 @@ public class DBManager {
         return INSTANCE;
     }
 
-    public void initConnection(){
+    public void initConnection(Context context){
+        realm.init(context);
         realm = Realm.getDefaultInstance();
     }
 
