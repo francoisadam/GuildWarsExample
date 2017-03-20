@@ -118,6 +118,8 @@ public class Achievement implements Parcelable {
         dest.writeString(requirement);
     }
 
+    public Achievement(){}
+
     private Achievement(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();

@@ -96,6 +96,8 @@ public class Category implements Parcelable {
         dest.writeString(description);
     }
 
+    public Category(){}
+
     private Category(Parcel in) {
         this.id = in.readInt();
         this.name = in.readString();

@@ -4,24 +4,39 @@ import com.example.francois.guildwarsexample.pojo.Category;
 
 import java.util.List;
 
+import io.realm.RealmObject;
+
 /**
  * Created by François Adam on 17/03/2017.
  */
 
-public class CategoryDB {
-    private static CategoryDB INSTANCE = new CategoryDB();
+public class CategoryDB extends RealmObject {
 
-    private CategoryDB(){}
-    public static CategoryDB getInstance(){
-        return INSTANCE;
+    private Integer id;
+    private String name;
+    private String description;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void initConnection(){}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public void closeConnection(){}
+    public String getName() {
+        return name;
+    }
 
-    public List<Category> loadCategories(List<Integer> ids) {return null;}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void addCategory(Category category) {}
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
