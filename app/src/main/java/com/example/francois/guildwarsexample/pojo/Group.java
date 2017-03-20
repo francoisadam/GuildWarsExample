@@ -83,6 +83,8 @@ public class Group implements Parcelable{
         dest.writeString(description);
     }
 
+    public Group(){}
+
     private Group(Parcel in) {
         this.id = in.readString();
         this.name = in.readString();

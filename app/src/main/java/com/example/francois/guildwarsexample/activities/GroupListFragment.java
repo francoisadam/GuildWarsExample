@@ -33,6 +33,7 @@ public class GroupListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbManager.initConnection(getActivity());
         adapter = new GroupAdapter(this.getActivity(), R.layout.group_layout,groups);
         collectData();
     }
